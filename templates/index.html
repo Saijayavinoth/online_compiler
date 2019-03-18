@@ -1,0 +1,219 @@
+<html>
+    <head>
+        <title>oc</title>
+        <style>
+            .button {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 200px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+            #div1{
+                width: 70%;
+                float: left;
+            }
+            #div2{
+                width: 30%;
+                float: right;
+            }
+            #div11{
+                float: left;
+            }
+            #div12{
+                float: left;
+            }
+            #comment{
+                color:red;
+            }
+            #button{
+                background-color: white;
+                color: black;
+                border: 2px dotted green;
+                border-radius: 30%;
+                font-size: 24px;
+            }
+            #button:hover{
+                background-color: rgb(255, 0, 140);
+            }
+            #logo{
+                float: right;
+                height: 7%;
+                width:10%;
+                
+            }
+            #heading{
+                color: rgb(255, 0, 140);
+                font-style: oblique;
+                font-size: 24px;
+                padding: 20px;
+                margin-left: 45%;
+            }
+            #output{
+                margin: 2px;
+                height: 500;
+                width: 500;
+            }
+            #input{
+                margin:2px;
+                height: 500;
+                width: 200;
+            }
+            
+            
+
+            
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script>              
+                $(document).ready(function(){
+                    $('form').keydown(function(event) {
+                        if ((event.ctrlKey||event.metaKey) && event.keyCode === 13) {
+                        $(this).trigger('submit');
+                        }
+                        })
+                });
+        </script>
+        <script src="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/codemirror.js"></script>
+        <link rel="stylesheet" href="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/codemirror.css"/>
+        <script src="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/python.js"></script>
+        <link rel="stylesheet" href="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/darcula.css"/>
+        <script src="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/closetag.js"></script>
+        <script src="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/closebrackets.js"></script>
+        <script src="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/matchbrackets.js"></script>
+        <script src="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/matchtags.js"></script>
+        <script src="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/trailingspace.js"></script>
+        <script type="text/javascript" src="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/javascript.js"></script>
+        <script type="text/javascript" src="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/clike.js"></script>
+    </head>
+    <body onload="loaded()">
+        <form action="/run" id="for" method="POST">
+            <div> 
+                <span id="heading">ONLINE COMPILER</span>
+                <img id="logo" src="https://s3.amazonaws.com/elasticbeanstalk-us-east-1-833845552962/logo.png" alt="loading"/><br>
+                <div>
+                <select name="lang" id="lang" onchange="myfun()" >
+                    <option value="c" {% if lang=='c' %}selected="selected"{% endif %}>c</option>
+                    <option value="c++" {% if lang=='c++' %}selected="selected"{% endif %}>c++</option>
+                    <option value="java" {% if lang=='java' %}selected="selected"{% endif %}>java</option>
+                    
+                    <option value="python3" {% if lang=='python3' %}selected="selected"{% endif %}>python3</option>
+                </select>
+                <span id="comment"></span>
+                </div>
+            </div>
+        <div>
+            <div id="div1">
+                        <div id="div11"><label>Program code<br><textarea id="code" name="code" rows="40" cols="60">{{code}}</textarea></label></div>
+                        <div id="div12"><label>Input<br><textarea id="input" name="input" rows="40" cols="40">{{input}}</textarea></label></div>                       
+                        <br><br><br><br><br><br><br><br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        
+
+            </div>
+            <div id="div2">
+                    Output<br><textarea name="output" id="output" rows="40" cols="50" readonly>{{output}}</textarea>
+            </div>
+        </div>
+        <div>
+            <button onclick="run()" class="button" style="vertical-align:middle"><span>Run</span></button>
+        </div>
+        </form>
+        
+        <script>
+            var b;
+            function loaded(){
+                var a=document.getElementById("lang").value;
+                if(a=="java")document.getElementById("comment").innerHTML="*use class cod";
+                if(a=="c"){b=CodeMirror.fromTextArea(document.getElementById("code"),{
+                mode:'text/x-csrc',
+                theme:'darcula',
+                lineNumbers:true,
+                autoCloseBrackets:true,
+                autoMatchTags:true,
+                autoTrailingSpace:true
+            }); b.setSize("500","500");}
+                else if(a=="c++"){b=CodeMirror.fromTextArea(document.getElementById("code"),{
+                mode:'text/x-c++src',
+                theme:'darcula',
+                lineNumbers:true,
+                autoCloseBrackets:true,
+                autoMatchTags:true,
+                autoTrailingSpace:true
+            }); b.setSize("500","500");}
+                else if(a=="java"){b=CodeMirror.fromTextArea(document.getElementById("code"),{
+                mode:'javascript',
+                theme:'darcula',
+                lineNumbers:true,
+                autoCloseBrackets:true,
+                autoMatchTags:true,
+                autoTrailingSpace:true
+            }); b.setSize("500","500");}
+                else if(a=="python"){b=CodeMirror.fromTextArea(document.getElementById("code"),{
+                mode:'python',
+                theme:'darcula',
+                lineNumbers:true,
+                autoCloseBrackets:true,
+                autoMatchTags:true,
+                autoTrailingSpace:true
+            }); b.setSize("500","500");}
+                else if(a=="python3"){
+                    b=CodeMirror.fromTextArea(document.getElementById("code"),{
+                mode:'python',
+                theme:'darcula',
+                lineNumbers:true,
+                autoCloseBrackets:true,
+                autoMatchTags:true,
+                autoTrailingSpace:true
+            }); b.setSize("500","500");
+                }
+            }
+            function myfun(){
+                var a=document.getElementById("lang").value;
+                
+                if(a=="c"){b.setOption("mode","text/x-csrc");document.getElementById("comment").innerHTML="";}
+                else if(a=="c++"){b.setOption("mode","text/x-c++src");document.getElementById("comment").innerHTML="";}
+                else if(a=="java"){b.setOption("mode","javascript");document.getElementById("comment").innerHTML="*use class cod";}
+                else if(a=="python"){b.setOption("mode","python");document.getElementById("comment").innerHTML="";}
+                else if(a=="python3"){b.setOption("mode","python");document.getElementById("comment").innerHTML="";}
+                }
+            function run(){
+                document.getElementById('for').trigger('submit');
+            }
+        </script>
+
+
+        
+    </body>
+</html>
